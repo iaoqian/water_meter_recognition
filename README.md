@@ -21,5 +21,5 @@ detect the region that contains object of digits.
 recognize digits in the region detected.
 
 ![region_seged](https://github.com/iaoqian/water_meter_recognition/blob/main/IMGS/train_seg_1.jpg)
-# ---> '0 0 1 4 1' #
+# → '0 0 1 4 1' #
 
