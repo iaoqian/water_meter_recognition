@@ -6,12 +6,44 @@ import torchvision.transforms.functional as F
 import numpy as np
 
 
+class TrainVisualizer:
+    def __init__(self):
+        self.data = {
+            'epochs': [], 'train_loss': [], 'train_acc': [], 'valid_loss': [], 'valid_acc': []
+        }
+
+    def record(self, **kwargs):
+        for key in kwargs.keys():
+            self.data[key].append(kwargs[key])
+
+    def visualize(self):
+        x = self.data['iterations']
+        plt.figure(figsize=(21, 7))
+        # subplot 1：loss-iter figure
+        plt.subplot(1, 2, 1)
+        plt.plot(x, self.data['train_loss'])
+        plt.plot(x, self.data['valid_loss'])
+        plt.legend(['train_loss', 'valid_loss'], loc='upper left')
+        # subplot 2: acc-iter figure
+        plt.subplot(1, 2, 2)
+        plt.plot(x, self.data['train_acc'])
+        plt.plot(x, self.data['valid_acc'])
+        plt.legend(['train_acc', 'valid_acc'], loc='upper left')
+        plt.show()
+
+    def reset(self):
+        self.data = {'iterations': [], 'train_loss': [], 'train_acc': [], 'valid_loss': [], 'valid_acc': []}
+
+
 def multi_target_loss(labels, logits):
+    # loss function for multiple digits recognition
     celoss = torch.nn.CrossEntropyLoss()
     return sum([celoss(lo, la) for lo, la in zip(logits.transpose(0, 1), labels.transpose(0, 1))]) / 5
 
 
 def sum_list_strs(list_strs):
+    # [str0, str1, str2, str3, ..., ]
+    # concat these strings together
     result = ''
     length = len(list_strs)
     for _ in range(length):

@@ -6,7 +6,6 @@ import PIL.Image
 
 
 class DigitsDateset(data.Dataset):
-
     str2int_labels = {
         '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
         '01': 10, '12': 11, '23': 12, '34': 13, '45': 14, '56': 15, '67': 16, '78': 17, '89': 18, '09': 19
@@ -16,7 +15,8 @@ class DigitsDateset(data.Dataset):
         10: '01', 11: '12', 12: '23', 13: '34', 14: '45', 15: '56', 16: '67', 17: '78', 18: '89', 19: '09'
     }
 
-    def __init__(self, dataset: str,root: str = 'WaterMeterDataset/ProcessedData', img_transform=None, target_transform=None):
+    def __init__(self, dataset: str, root: str = 'WaterMeterDataset/ProcessedData', img_transform=None,
+                 target_transform=None):
         if dataset == 'test':
             self.images_path = root + '/test_imgs_seg'
             self.label_path = None
@@ -36,6 +36,7 @@ class DigitsDateset(data.Dataset):
                 transforms.ToTensor(),
                 transforms.Resize((64, 288)),
                 transforms.ColorJitter(brightness=0.5, hue=0.2),
+                transforms.RandomRotation([-10, 10]),
             ]
         )
         return trans(img)
@@ -43,11 +44,13 @@ class DigitsDateset(data.Dataset):
     @staticmethod
     def _default_target_transform(target: str):
         # target data format [x0, y0, x1, y1, x2, y2, x3, y3, [...digit data...]]
-        digits = target.split()[8: ]
+        digits = target.split()[8:]
         label = [digits[0][0], digits[0][1], digits[0][2], digits[0][3], digits[0][4]]
         for i in range(len(digits) - 1):
             for j in range(5):
                 if digits[i + 1][j] not in label[j]:
+                    # assume 2-3, 3-2 are same, though it's not in dataset
+                    # the problem is there is no enough data to support training without this operation
                     if label[j] < digits[i + 1][j]:
                         label[j] = label[j] + digits[i + 1][j]
                     else:
@@ -57,9 +60,9 @@ class DigitsDateset(data.Dataset):
         return torch.tensor(label)
 
     def __getitem__(self, index):
-
         if not self.label_path:
             image = PIL.Image.open(self.images_path + f'/test_seg_{index + 1}.jpg')
+            # while test, not use data augment
             return transforms.Resize((64, 288))(transforms.ToTensor()(image))
         else:
             image = PIL.Image.open(self.images_path + f'/train_seg_{index + 1}.jpg')
@@ -73,9 +76,9 @@ class DigitsDateset(data.Dataset):
 
 class RawWaterMeterDS(data.Dataset):
     """
-    Read raw water meter dataset for pre-processing
-    ATTENTION: !!NOT FOR TRAINING!!
+    Read raw water meter dataset for pre-processing or something
     """
+
     def __init__(self, dataset='train', root='./WaterMeterDataset', img_transform=None, target_transform=None):
         if dataset == 'train':
             self.images_path = root + '/train_imgs'
