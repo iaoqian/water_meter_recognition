@@ -26,26 +26,23 @@ class Transform(torch.nn.Module):
             image = transforms.Resize((480, 270))(image)
             if angels:
                 angels = torch.atan(
-                    torch.tan(angels * 90 / 180 * torch.pi) /
-                    (origin_size[0] / 480.0) * (origin_size[1] / 270.0)
-                ) / torch.pi * 180.0 / 90.0
+                    torch.tan(angels * 90 / 180 * torch.pi) / (origin_size[0] / 480.0) * (origin_size[1] / 270.0)
+                )
         elif origin_size[0] / origin_size[1] <= 0.67:
             image = transforms.Resize((270, 480))(image)
             if angels:
                 angels = torch.atan(
-                    torch.tan(angels * 90 / 180 * torch.pi) /
-                    (origin_size[0] / 270.0) * (origin_size[1] / 480.0)
-                ) / torch.pi * 180.0 / 90.0
+                    torch.tan(angels * 90 / 180 * torch.pi) / (origin_size[0] / 270.0) * (origin_size[1] / 480.0)
+                )
         else:
             image = transforms.Resize((270, 270))(image)
             if angels:
                 angels = torch.atan(
-                    torch.tan(angels * 90 / 180 * torch.pi) /
-                    (origin_size[0] / 270.0) * (origin_size[1] / 270.0)
-                ) / torch.pi * 180.0 / 90.0
+                    torch.tan(angels * 90 / 180 * torch.pi) / (origin_size[0] / 270.0) * (origin_size[1] / 270.0)
+                )
 
         if angels is not None:
-            return transforms.CenterCrop((224, 224))(image), angels
+            return transforms.CenterCrop((224, 224))(image), angels / torch.pi * 180.0 / 90.0
         else:
             return transforms.CenterCrop((224, 224))(image)
 
