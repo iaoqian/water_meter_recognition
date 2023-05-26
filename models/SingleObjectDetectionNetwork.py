@@ -92,3 +92,4 @@ def fasterrcnn_mobilenet_v3_large_320_fpn():
                           )
     # use backbone in pretrained model directly
     my_model.backbone = pretrained_model.backbone
+    return my_model

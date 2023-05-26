@@ -126,7 +126,6 @@ def rota_reg_net_resnet18(pretrained_model_filepath=None):
         backbone = torch.load(pretrained_model_filepath)
 
     backbone.fc = torch.nn.Identity()
-
     config = {
         'backbone': backbone,
         'output_dim': 512,

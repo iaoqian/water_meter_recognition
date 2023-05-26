@@ -8,31 +8,32 @@ import numpy as np
 
 class TrainVisualizer:
     def __init__(self):
-        self.data = {
-            'epochs': [], 'train_loss': [], 'train_acc': [], 'valid_loss': [], 'valid_acc': []
-        }
+        self.data = {}
 
     def record(self, **kwargs):
         for key in kwargs.keys():
-            self.data[key].append(kwargs[key])
+            if key in self.data.keys():
+                self.data[key].append(kwargs[key])
+            else:
+                self.data[key] = [kwargs[key]]
 
-    def visualize(self):
-        x = self.data['iterations']
-        plt.figure(figsize=(21, 7))
-        # subplot 1：loss-iter figure
-        plt.subplot(1, 2, 1)
-        plt.plot(x, self.data['train_loss'])
-        plt.plot(x, self.data['valid_loss'])
-        plt.legend(['train_loss', 'valid_loss'], loc='upper left')
-        # subplot 2: acc-iter figure
-        plt.subplot(1, 2, 2)
-        plt.plot(x, self.data['train_acc'])
-        plt.plot(x, self.data['valid_acc'])
-        plt.legend(['train_acc', 'valid_acc'], loc='upper left')
+    def visualize(self, x_axis_key: str, y_axis_keys: list[list or str]):
+        x = self.data[x_axis_key]
+        sub_plots = len(y_axis_keys)
+        plt.figure(figsize=(7, 5 * sub_plots))
+        for sub_plot_idx in range(sub_plots):
+            plt.subplot(sub_plots, 1, sub_plot_idx + 1)
+            if not isinstance(y_axis_keys[sub_plot_idx], list or tuple):
+                y_axis_keys[sub_plot_idx] = [y_axis_keys[sub_plot_idx],]
+            legend = []
+            for curve_idx in range(len(y_axis_keys[sub_plot_idx])):
+                plt.plot(x, self.data[y_axis_keys[sub_plot_idx][curve_idx]])
+                legend.append(y_axis_keys[sub_plot_idx][curve_idx])
+            plt.legend(legend, loc='upper left')
         plt.show()
 
     def reset(self):
-        self.data = {'iterations': [], 'train_loss': [], 'train_acc': [], 'valid_loss': [], 'valid_acc': []}
+        self.data = {}
 
 
 def multi_target_loss(labels, logits):
