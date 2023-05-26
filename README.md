@@ -4,7 +4,7 @@ Machine Learning Cource final project,
 
 ## Problem Description
 ![imgs](https://github.com/iaoqian/water_meter_recognition/blob/main/IMGS/data.png)
-#### Detect dights in photo of water meter
+#### read dights in the photo of water meter
 ## Problem Solution
 ### WORKFLOW:  Rotation Regression → Object Detection → Digits Recognition
 ### *1.Rotation Regression*
