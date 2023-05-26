@@ -26,18 +26,23 @@ class Transform(torch.nn.Module):
             image = transforms.Resize((480, 270))(image)
             if angels:
                 angels = torch.atan(
-                    torch.tan(angels * 90 / 180 * torch.pi) *
-                    (origin_size[0] / 480.0) / (origin_size[1] / 270.0)
+                    torch.tan(angels * 90 / 180 * torch.pi) /
+                    (origin_size[0] / 480.0) * (origin_size[1] / 270.0)
                 ) / torch.pi * 180.0 / 90.0
         elif origin_size[0] / origin_size[1] <= 0.67:
             image = transforms.Resize((270, 480))(image)
             if angels:
                 angels = torch.atan(
-                    torch.tan(angels * 90 / 180 * torch.pi) *
-                    (origin_size[0] / 270.0) / (origin_size[1] / 480.0)
+                    torch.tan(angels * 90 / 180 * torch.pi) /
+                    (origin_size[0] / 270.0) * (origin_size[1] / 480.0)
                 ) / torch.pi * 180.0 / 90.0
         else:
             image = transforms.Resize((270, 270))(image)
+            if angels:
+                angels = torch.atan(
+                    torch.tan(angels * 90 / 180 * torch.pi) /
+                    (origin_size[0] / 270.0) * (origin_size[1] / 270.0)
+                ) / torch.pi * 180.0 / 90.0
 
         if angels is not None:
             return transforms.CenterCrop((224, 224))(image), angels
@@ -74,15 +79,12 @@ class Transform(torch.nn.Module):
             origin_size = self.origin_sizes[i]
 
             if origin_size[0] / origin_size[1] >= 1.5:
-                predictions[i] = torch.atan(
-                    torch.tan(predictions[i] * 90 / 180 * torch.pi) /
-                    (origin_size[0] / 480.0) * (origin_size[1] / 270.0)
-                )
+                predictions[i] = predictions[i] * (origin_size[0] / 480.0) / (origin_size[1] / 270.0)
             elif origin_size[0] / origin_size[1] <= 0.67:
-                predictions[i] = torch.atan(
-                    torch.tan(predictions[i] * 90 / 180 * torch.pi) /
-                    (origin_size[0] / 270.0) * (origin_size[1] / 480.0)
-                )
+                predictions[i] = predictions[i] * (origin_size[0] / 270.0) / (origin_size[1] / 480.0)
+            else:
+                predictions[i] = predictions[i] * (origin_size[0] / 270.0) / (origin_size[1] / 270.0)
+
         self.origin_sizes.clear()
         return torch.atan(predictions) / torch.pi * 180.0
 
@@ -109,7 +111,10 @@ class RotaRegNetwork(torch.nn.Module):
         X, y = self.transform(images, rota_values)
         X = X.to(device)
         y = y.to(device) if y is not None else None
+        # always set backbone in train mode
+        self.backbone.train()
         y_hat = self.reg_head(self.backbone(X))
+
         if self.training:
             assert y is not None, 'rota_values can\'t be None when model in training mode.'
             return RotaRegNetwork.compute_loss(y_hat, y), self.transform.post_process(y_hat)

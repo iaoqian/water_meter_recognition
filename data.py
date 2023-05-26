@@ -94,8 +94,12 @@ class RawWaterMeterDS(data.Dataset):
 
     @staticmethod
     def _default_img_transform(img: PIL.Image):
-        trans = transforms.ToTensor()
-
+        trans = transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.ColorJitter(brightness=0.5, hue=0.2),
+            ]
+        )
         return trans(img)
 
     @staticmethod
