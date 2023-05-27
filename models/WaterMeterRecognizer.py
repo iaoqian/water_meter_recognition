@@ -2,7 +2,6 @@ import torch
 from torchvision import transforms
 
 
-
 class WaterMeterRecognizer(torch.nn.Module):
     def __init__(self,
                  rota_reg_net,
