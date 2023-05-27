@@ -55,6 +55,8 @@ class Transform(torch.nn.Module):
             angels = [angels]
         if isinstance(angels, tuple):
             angels = list(angels)
+        # origin_sizes could be non-empty due to unexpected interrupt or other reasons, so clear it.
+        self.origin_sizes.clear()
         if angels is not None:
             for i in range(len(images)):
                 images[i], angels[i] = self.img_transforms(images[i], angels[i])
@@ -92,19 +94,23 @@ class RotaRegNetwork(torch.nn.Module):
         super().__init__()
         self.transform = transform
         self.backbone = backbone
+        # todo: reg_head was a improper design, remove it.
         self.reg_head = torch.nn.Linear(output_dim, 1)
 
     @staticmethod
     def compute_loss(y_hat, y):
-        # compute RMSE loss
+        # compute losses
+        # you can choose one of them or some of them as your loss value.
+        # but I recommend using MAE loss, out of my experience in practice :)
         mse_loss = torch.nn.MSELoss()(y_hat, y)
         mae_loss = torch.nn.L1Loss()(y_hat, y)
         smooth_l1_loss = torch.nn.SmoothL1Loss()(y_hat, y)
         return {'mse_loss': mse_loss, 'mae_loss': mae_loss, 'smooth_l1_loss': smooth_l1_loss}
 
     def forward(self, images, rota_values=None):
-        # TODO not proper usage
+        # todo: fix this improper usage
         device = self.reg_head._parameters['bias'].device
+
         X, y = self.transform(images, rota_values)
         X = X.to(device)
         y = y.to(device) if y is not None else None

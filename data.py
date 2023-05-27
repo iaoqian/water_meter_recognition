@@ -6,10 +6,15 @@ import PIL.Image
 
 
 class DigitsDateset(data.Dataset):
+    """
+    Load data segmented from origin data.
+    """
+
     str2int_labels = {
         '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
         '01': 10, '12': 11, '23': 12, '34': 13, '45': 14, '56': 15, '67': 16, '78': 17, '89': 18, '09': 19
     }
+
     int2str_labels = {
         0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9',
         10: '01', 11: '12', 12: '23', 13: '34', 14: '45', 15: '56', 16: '67', 17: '78', 18: '89', 19: '09'
@@ -31,12 +36,13 @@ class DigitsDateset(data.Dataset):
 
     @staticmethod
     def _default_img_transform(img: PIL.Image):
+        # simple data augmentation
         trans = transforms.Compose(
             [
                 transforms.ToTensor(),
                 transforms.Resize((64, 288)),
                 transforms.ColorJitter(brightness=0.5, hue=0.2),
-                transforms.RandomRotation([-10, 10]),
+                transforms.RandomRotation([-5, 5]),
             ]
         )
         return trans(img)
@@ -118,7 +124,8 @@ class RawWaterMeterDS(data.Dataset):
 
         if not self.label_path:
             image = PIL.Image.open(self.images_path + f'/test_{index + 1}.jpg')
-            return self.img_transform(image)
+            # not use data augment while handling test images
+            return transforms.ToTensor()(image)
         else:
             image = PIL.Image.open(self.images_path + f'/train_{index + 1}.jpg')
             label = open(self.label_path + f'/labels/train_{index + 1}.txt').read()

@@ -1,11 +1,8 @@
 import torch
-import torch.utils.data as data
-import torchvision
-import torchvision.transforms as transforms
-import PIL.Image
 
 
 class SubSampleBlock(torch.nn.Module):
+
     def __init__(self, in_dim, out_dim):
         super().__init__()
         self.conv0 = torch.nn.Conv2d(in_dim, out_dim, kernel_size=3, padding='same')
@@ -23,6 +20,7 @@ class SubSampleBlock(torch.nn.Module):
 
 
 class ResidualBlock(torch.nn.Module):
+
     def __init__(self, module):
         super().__init__()
         self.module = module
@@ -32,6 +30,7 @@ class ResidualBlock(torch.nn.Module):
 
 
 class MaintainBlock(torch.nn.Module):
+
     def __init__(self, dim, num_layers):
         super().__init__()
         layers = []
@@ -49,6 +48,7 @@ class MaintainBlock(torch.nn.Module):
 
 
 class DigitsRecognizer(torch.nn.Module):
+
     def __init__(self):
         super().__init__()
         # shape [batch, 3, 64, 288]
@@ -79,6 +79,7 @@ class DigitsRecognizer(torch.nn.Module):
 
 
 class DigitsPredictor:
+
     int2str_labels = {
         0: '0', 1: '1', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9',
         10: '01', 11: '12', 12: '23', 13: '34', 14: '45', 15: '56', 16: '67', 17: '78', 18: '89', 19: '90'
@@ -86,25 +87,25 @@ class DigitsPredictor:
 
     @staticmethod
     def predict(logits):
+        # TERRIBLE CODE!!! :(
+        # todo: make it looks better
         batch_preds = []
-        logits = logits.cpu().detach()
-        logits = logits.argmax(dim=2)
+        logits = logits.cpu().detach().argmax(dim=2)
         for row in logits:
-            pred = []
-            preds = []
+            digit = []
+            prediction = []
             idx = []
             for i in range(5):
                 val = DigitsPredictor.int2str_labels[row[i].item()]
-                pred.append(val)
+                digit.append(val)
                 idx.append(len(val))
-
-            for a in range(idx[0]):
-                for b in range(idx[1]):
-                    for c in range(idx[2]):
-                        for d in range(idx[3]):
-                            for e in range(idx[4]):
-                                preds.append(pred[0][a] + pred[1][b] + pred[2][c] + pred[3][d] + pred[4][e])
-            batch_preds.append(preds)
+            for i in range(idx[0]):
+                for j in range(idx[1]):
+                    for k in range(idx[2]):
+                        for m in range(idx[3]):
+                            for n in range(idx[4]):
+                                prediction.append(digit[0][i] + digit[1][j] + digit[2][k] + digit[3][m] + digit[4][n])
+            batch_preds.append(prediction)
         return batch_preds
 
     def __call__(self, arg):

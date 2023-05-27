@@ -3,6 +3,10 @@ import torchvision
 
 
 class SingleObjectDetectionNetwork(torch.nn.Module):
+    """
+    This detection task is too easy.
+    Simple regression of 4 coordinates of object box can do the job as well.
+    """
     def __init__(self, transform, backbone, reg_head):
         super().__init__()
         self.transform = transform
@@ -59,11 +63,12 @@ def single_od_network():
 
 
 def fasterrcnn_mobilenet_v3_large_320_fpn():
+    # well, typical detection network works perfectly, efficiently here.
     pretrained_model = torchvision.models.detection.fasterrcnn_mobilenet_v3_large_320_fpn(
         weights=torchvision.models.detection.FasterRCNN_MobileNet_V3_Large_320_FPN_Weights.COCO_V1
     )
     out_channels = pretrained_model.backbone(torch.rand(1, 3, 1, 1))['0'].shape[1]
-
+    # we've actually known the rough shape of region, so we can actually improve anchor generation strategy
     anchor_sizes = ((32, 64, 128, 256, 512,),) * 3
     aspect_ratios = ((0.5, 1.0, 2.0),) * len(anchor_sizes)
 
@@ -80,7 +85,7 @@ def fasterrcnn_mobilenet_v3_large_320_fpn():
     from torchvision.models.detection.anchor_utils import AnchorGenerator
 
     class DummyBackbone(torch.nn.Module):
-        # to fool FasterRCNN class
+        # to fool FasterRCNN class, because Faster RCNN requires a backbone network with attribute 'out_channels'
         def __init__(self, out_channels):
             super().__init__()
             self.out_channels = out_channels
@@ -90,6 +95,7 @@ def fasterrcnn_mobilenet_v3_large_320_fpn():
                           rpn_anchor_generator=AnchorGenerator(anchor_sizes, aspect_ratios),
                           **defaults
                           )
-    # use backbone in pretrained model directly
+    # use backbone in pretrained faster rcnn model directly
+    # skip complicated steps in building a backbone with FPN, fine.
     my_model.backbone = pretrained_model.backbone
     return my_model
