@@ -47,9 +47,9 @@ def water_meter_recognizer_pretrained(rrn_filepath='TrainedModels/RRN.pt',
                                       sodn_file_path='TrainedModels/SODN.pt',
                                       drn_filepath='TrainedModels/DRN.pt'):
 
-    from models.DigitsRecgnitionNetwork import DigitsRecognizer, DigitsPredictor
-    from models.RotationRegressionNetwork import RotaRegNetwork, Transform
-    from models.SingleObjectDetectionNetwork import SingleObjectDetectionNetwork
+    from models.digits_recognition_network import DigitsRecognizer, DigitsPredictor
+    from models.rotation_regression_network import RotaRegNetwork, Transform
+    from models.single_object_detection_network import SingleObjectDetectionNetwork
 
     rrn = torch.load(rrn_filepath)
     sodn = torch.load(sodn_file_path)
