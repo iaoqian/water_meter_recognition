@@ -28,7 +28,7 @@ Recognize digits in the region detected.
 # → '0 0 1 4 1' #
 
 ## TO MAKE IT BETTER:
-It got a score of 0.818 in metric $\frac{TP + NP}{P + N}, i.e. Accuracy$, in test dateset. not bad, generally.
+It got a score of 0.818 in metric $\frac{TP + NP}{P + N}, i.e. Accuracy$, in test dateset. Generally speaking, not bad.
  
 ![submit_socre](https://github.com/iaoqian/water_meter_recognition/blob/main/IMGS/submit_score.png)
  
