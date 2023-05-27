@@ -8,7 +8,7 @@ But I did it, for this specific task, in my way. So, it's sure, when you keep on
 
 ## Problem Description
 ![imgs](https://github.com/iaoqian/water_meter_recognition/blob/main/IMGS/data.png)
-#### read dights in the photo of water meter
+#### Read dights in the photo of water meter
 ## Problem Solution
 ### WORKFLOW:  Rotation Regression → Object Detection → Digits Recognition
 ### *1.Rotation Regression*
