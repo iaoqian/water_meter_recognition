@@ -140,6 +140,3 @@ def coordinate_rotation_transform(coordinates: list[int],
             new_coors.append(rotate_one_coordinate(coordinates[2 * i + 1], coordinates[2 * i]).flip(dims=(0,)))
 
     return torch.cat(new_coors, dim=0)
-
-
-
