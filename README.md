@@ -4,7 +4,7 @@ Machine Learning Cource, Spring 2023, Final Project.
 ## At the Begining
 This project is NOT aiming to show you some brilliant scores it achieved, instead, it tries to make you how I manage and solve a relatively complicated Machine Learning problem in real world.
 As a matter of fact, there have been some blogs/guidance show you how to deal with this problem. Using semantic(image) segmentation + classification is a universal way to handle problems like this.
-But I did it, for this specific task, in my way. So, it's sure, when you keep on reading you'll find its limitaitions. But that's not my purpose.
+But I did it, for this specific task, in my way. Well, it's sure, when you keep on reading you'll find its limitaitions. But that's not actual my purpose.
 
 ## Problem Description
 ![imgs](https://github.com/iaoqian/water_meter_recognition/blob/main/IMGS/data.png)
