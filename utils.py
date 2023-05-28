@@ -130,7 +130,7 @@ def coordinate_rotation_transform(coordinates: list[int],
         return Rv
 
     new_coors = []
-    # default: x <--> H, y <--> W
+    # default: x <--> W, y <--> H
     # if you want to swap them, enable it.
     if swap_xy:
         for i in range(len(coordinates) // 2):
