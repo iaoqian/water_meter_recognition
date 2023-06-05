@@ -64,7 +64,7 @@ def multi_target_loss(labels, logits):
     # briefly, labels with shape (batch, num_targets), logits with shape (batch, num_targets, num_classes)
     # in this project, we tried to recognize 5 targets(i.e. read 5 digits in water meter) and 20 different
     # classes in our definition.
-    # we use average loss on 5 targets as final loss, all we need to do is compute losses in every single target
+    # we use average loss on 5 targets as final loss, all we need to do is computing losses in every single target
     # to do that, we compute as follows.
     losses = [celoss(lo, la) for lo, la in zip(logits.transpose(0, 1), labels.transpose(0, 1))]
     return sum(losses) / len(losses)
