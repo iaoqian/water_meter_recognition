@@ -1,5 +1,5 @@
-/WaterMeterDataset
-/TrainedModels
+WaterMeterDataset/
+TrainedModels/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
